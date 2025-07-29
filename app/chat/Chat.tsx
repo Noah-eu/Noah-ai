@@ -16,16 +16,24 @@ export default function Chat() {
 
   async function handleSend() {
     if (!input.trim()) return;
-    const userMsg = { sender: 'user', text: input };
+
+    // Klíčové: typový náznak nebo "as const"
+    const userMsg: Message = { sender: 'user', text: input };
     setMessages((msgs) => [...msgs, userMsg]);
     setInput("");
     setLoading(true);
 
     try {
       const answer = await askNoah(input);
-      setMessages((msgs) => [...msgs, { sender: 'noah', text: answer }]);
+      setMessages((msgs) => [
+        ...msgs,
+        { sender: 'noah' as const, text: answer }
+      ]);
     } catch {
-      setMessages((msgs) => [...msgs, { sender: 'noah', text: "Omlouvám se, něco se pokazilo. Zkuste to prosím znovu." }]);
+      setMessages((msgs) => [
+        ...msgs,
+        { sender: 'noah' as const, text: "Omlouvám se, něco se pokazilo. Zkuste to prosím znovu." }
+      ]);
     }
     setLoading(false);
   }
@@ -57,6 +65,10 @@ export default function Chat() {
           Odeslat
         </button>
       </div>
+    </div>
+  );
+}
+
     </div>
   );
 }
