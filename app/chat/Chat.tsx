@@ -16,8 +16,6 @@ export default function Chat() {
 
   async function handleSend() {
     if (!input.trim()) return;
-
-    // Klíčové: typový náznak nebo "as const"
     const userMsg: Message = { sender: 'user', text: input };
     setMessages((msgs) => [...msgs, userMsg]);
     setInput("");
@@ -27,12 +25,12 @@ export default function Chat() {
       const answer = await askNoah(input);
       setMessages((msgs) => [
         ...msgs,
-        { sender: 'noah' as const, text: answer }
+        { sender: 'noah', text: answer }
       ]);
     } catch {
       setMessages((msgs) => [
         ...msgs,
-        { sender: 'noah' as const, text: "Omlouvám se, něco se pokazilo. Zkuste to prosím znovu." }
+        { sender: 'noah', text: "Omlouvám se, něco se pokazilo. Zkuste to prosím znovu." }
       ]);
     }
     setLoading(false);
@@ -40,6 +38,11 @@ export default function Chat() {
 
   return (
     <div className="max-w-md w-full mx-auto flex flex-col h-[500px] bg-white rounded-2xl shadow-xl p-4">
+      {/* Noahova fotka v hlavičce */}
+      <div className="flex flex-col items-center mb-4">
+        <img src="/noah.jpg" alt="Noah" className="w-16 h-16 rounded-full shadow-md" />
+        <div className="font-semibold text-gray-700 mt-2">Noah</div>
+      </div>
       <div className="flex-1 overflow-y-auto mb-2">
         {messages.map((msg, i) => (
           <MessageBubble key={i} sender={msg.sender} text={msg.text} />
@@ -68,3 +71,4 @@ export default function Chat() {
     </div>
   );
 }
+
