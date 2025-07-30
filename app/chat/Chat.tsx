@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import MessageBubble from "./MessageBubble";
 import { askNoah } from "../../utils/openai";
 
@@ -13,6 +13,13 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Ref pro scrollování na konec chatu
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
 
   async function handleSend() {
     if (!input.trim()) return;
@@ -50,6 +57,8 @@ export default function Chat() {
         {loading && (
           <MessageBubble sender="noah" text="Noah přemýšlí..." />
         )}
+        {/* Ref na konec kontejneru */}
+        <div ref={messagesEndRef} />
       </div>
       <div className="flex gap-2">
         <input
@@ -71,4 +80,3 @@ export default function Chat() {
     </div>
   );
 }
-
