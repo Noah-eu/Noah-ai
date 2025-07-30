@@ -8,7 +8,7 @@ export default function Home() {
       <p className="text-xl max-w-xl text-center text-gray-600 mb-8">
         I’m here whenever you need someone to talk to.<br />
         I’ll listen. I’ll stay. <br />
-        Your romantic AI companion.
+        I´m your companion.
       </p>
       <Link
         href="/chat"
