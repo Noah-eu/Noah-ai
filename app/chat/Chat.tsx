@@ -37,7 +37,7 @@ export default function Chat() {
   }
 
   return (
-    <div className="max-w-md w-full mx-auto flex flex-col h-[500px] bg-white rounded-2xl shadow-xl p-4">
+    <div className="max-w-md w-full mx-auto flex flex-col h-[90vh] max-h-[700px] bg-white rounded-2xl shadow-xl p-4">
       {/* Noahova fotka v hlavičce */}
       <div className="flex flex-col items-center mb-4">
         <img src="/noah.jpg" alt="Noah" className="w-16 h-16 rounded-full shadow-md" />
