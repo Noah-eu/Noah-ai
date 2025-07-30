@@ -14,8 +14,22 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Ref pro scrollování na konec chatu
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  // Načtení historie z localStorage po načtení komponenty
+  useEffect(() => {
+    const saved = localStorage.getItem("noah-chat");
+    if (saved) {
+      setMessages(JSON.parse(saved));
+    }
+  }, []);
+
+  // Uložení historie do localStorage při každé změně zpráv
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem("noah-chat", JSON.stringify(messages));
+    }
+  }, [messages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -57,7 +71,6 @@ export default function Chat() {
         {loading && (
           <MessageBubble sender="noah" text="Noah přemýšlí..." />
         )}
-        {/* Ref na konec kontejneru */}
         <div ref={messagesEndRef} />
       </div>
       <div className="flex gap-2">
