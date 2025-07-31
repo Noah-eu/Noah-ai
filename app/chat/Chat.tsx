@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import MessageBubble from "./MessageBubble";
+import { useState, useEffect, useRef } from "react";
 import { askNoah } from "../../utils/openai";
 
 type Message = {
@@ -9,61 +8,84 @@ type Message = {
   text: string;
 };
 
+const HISTORY_KEY = "chat_history";
+
+function MessageBubble({ sender, text }: Message) {
+  return (
+    <div className={`flex mb-2 ${sender === "user" ? "justify-end" : "justify-start"}`}>
+      {sender === "noah" && (
+        <img
+          src="/noah.jpg"
+          alt="Noah"
+          className="w-8 h-8 rounded-full mr-2 self-end"
+          style={{ alignSelf: "flex-end" }}
+        />
+      )}
+      <div
+        className={`rounded-2xl px-4 py-2 max-w-xs
+          ${sender === "user"
+            ? "bg-blue-500 text-white self-end"
+            : "bg-gray-200 text-gray-900 self-start"}
+        `}
+      >
+        {text}
+      </div>
+      {/* Uživatelská bublina nemá fotku */}
+    </div>
+  );
+}
+
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const chatBottomRef = useRef<HTMLDivElement | null>(null);
 
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
-  // Načtení historie z localStorage po načtení komponenty
+  // Načti historii z localStorage při načtení komponenty
   useEffect(() => {
-    const saved = localStorage.getItem("noah-chat");
-    if (saved) {
-      setMessages(JSON.parse(saved));
-    }
+    const saved = localStorage.getItem(HISTORY_KEY);
+    if (saved) setMessages(JSON.parse(saved));
   }, []);
 
-  // Uložení historie do localStorage při každé změně zpráv
+  // Ulož historii do localStorage při každé změně
   useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem("noah-chat", JSON.stringify(messages));
-    }
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(messages));
+    chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
 
   async function handleSend() {
     if (!input.trim()) return;
-    const userMsg: Message = { sender: 'user', text: input };
-    setMessages((msgs) => [...msgs, userMsg]);
+    const userMsg: Message = { sender: "user", text: input };
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
     setInput("");
     setLoading(true);
 
     try {
-      const answer = await askNoah(input);
-      setMessages((msgs) => [
-        ...msgs,
-        { sender: 'noah', text: answer }
-      ]);
+      const answer = await askNoah(input, newMessages);
+      setMessages((msgs) => [...msgs, { sender: "noah", text: answer }]);
     } catch {
       setMessages((msgs) => [
         ...msgs,
-        { sender: 'noah', text: "Omlouvám se, něco se pokazilo. Zkuste to prosím znovu." }
+        { sender: "noah", text: "Omlouvám se, něco se pokazilo. Zkuste to prosím znovu." }
       ]);
     }
     setLoading(false);
   }
 
+  function handleClearChat() {
+    setMessages([]);
+    localStorage.removeItem(HISTORY_KEY);
+  }
+
   return (
     <div className="max-w-md w-full mx-auto flex flex-col h-[90vh] max-h-[700px] bg-white rounded-2xl shadow-xl p-4">
-      {/* Noahova fotka v hlavičce */}
+      {/* Hlavička */}
       <div className="flex flex-col items-center mb-4">
         <img src="/noah.jpg" alt="Noah" className="w-16 h-16 rounded-full shadow-md" />
         <div className="font-semibold text-gray-700 mt-2">Noah</div>
       </div>
+      {/* Chat bubliny */}
       <div className="flex-1 overflow-y-auto mb-2">
         {messages.map((msg, i) => (
           <MessageBubble key={i} sender={msg.sender} text={msg.text} />
@@ -71,8 +93,9 @@ export default function Chat() {
         {loading && (
           <MessageBubble sender="noah" text="Noah přemýšlí..." />
         )}
-        <div ref={messagesEndRef} />
+        <div ref={chatBottomRef} />
       </div>
+      {/* Odesílací pole */}
       <div className="flex gap-2">
         <input
           className="flex-1 border border-gray-300 rounded-xl p-2"
@@ -90,6 +113,14 @@ export default function Chat() {
           Odeslat
         </button>
       </div>
+      {/* Tlačítko smazat chat */}
+      <button
+        className="mt-3 w-full text-sm py-2 rounded-xl bg-gray-100 text-gray-500 hover:bg-red-100 hover:text-red-700 transition"
+        onClick={handleClearChat}
+        disabled={loading}
+      >
+        Smazat chat
+      </button>
     </div>
   );
 }
