@@ -21,14 +21,6 @@ function MessageBubble({ sender, text }: Message) {
           style={{ alignSelf: "flex-end" }}
         />
       )}
-      {sender === "user" && (
-        <img
-          src="/user.png"
-          alt="Ty"
-          className="w-8 h-8 rounded-full ml-2 self-end"
-          style={{ alignSelf: "flex-end" }}
-        />
-      )}
       <div
         className={`rounded-2xl px-4 py-2 max-w-xs
           ${sender === "user"
@@ -90,7 +82,7 @@ export default function Chat() {
       {/* Hlavička */}
       <div className="flex flex-col items-center mb-4">
         <img src="/noah.jpg" alt="Noah" className="w-16 h-16 rounded-full shadow-md" />
-        <div className="font-semibold text-gray-700 mt-2">Noah</div>
+        <div className="font-semibold text-gray-700 mt-2 text-xl">Noah</div>
       </div>
       {/* Chat bubliny */}
       <div className="flex-1 overflow-y-auto mb-2">
@@ -106,3 +98,28 @@ export default function Chat() {
       <div className="flex gap-2">
         <input
           className="flex-1 border border-gray-300 rounded-xl p-2"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && handleSend()}
+          placeholder="Napiš zprávu Noahovi…"
+          disabled={loading}
+        />
+        <button
+          className="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold"
+          onClick={handleSend}
+          disabled={loading}
+        >
+          Odeslat
+        </button>
+      </div>
+      {/* Tlačítko smazat chat */}
+      <button
+        className="mt-3 w-full text-sm py-2 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-700 transition"
+        onClick={handleClearChat}
+        disabled={loading}
+      >
+        Vymazat chat
+      </button>
+    </div>
+  );
+}
