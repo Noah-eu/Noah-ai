@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { askNoah } from "../../utils/openai";
 
 type Message = {
-  sender: 'user' | 'noah';
+  sender: "user" | "noah";
   text: string;
 };
 
@@ -21,6 +21,14 @@ function MessageBubble({ sender, text }: Message) {
           style={{ alignSelf: "flex-end" }}
         />
       )}
+      {sender === "user" && (
+        <img
+          src="/user.png"
+          alt="Ty"
+          className="w-8 h-8 rounded-full ml-2 self-end"
+          style={{ alignSelf: "flex-end" }}
+        />
+      )}
       <div
         className={`rounded-2xl px-4 py-2 max-w-xs
           ${sender === "user"
@@ -30,7 +38,6 @@ function MessageBubble({ sender, text }: Message) {
       >
         {text}
       </div>
-      {/* Uživatelská bublina nemá fotku */}
     </div>
   );
 }
@@ -41,13 +48,13 @@ export default function Chat() {
   const [loading, setLoading] = useState(false);
   const chatBottomRef = useRef<HTMLDivElement | null>(null);
 
-  // Načti historii z localStorage při načtení komponenty
+  // Načtení historie z localStorage při načtení komponenty
   useEffect(() => {
     const saved = localStorage.getItem(HISTORY_KEY);
     if (saved) setMessages(JSON.parse(saved));
   }, []);
 
-  // Ulož historii do localStorage při každé změně
+  // Uložení historie do localStorage a scroll na konec
   useEffect(() => {
     localStorage.setItem(HISTORY_KEY, JSON.stringify(messages));
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -99,28 +106,3 @@ export default function Chat() {
       <div className="flex gap-2">
         <input
           className="flex-1 border border-gray-300 rounded-xl p-2"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && handleSend()}
-          placeholder="Napiš zprávu Noahovi…"
-          disabled={loading}
-        />
-        <button
-          className="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold"
-          onClick={handleSend}
-          disabled={loading}
-        >
-          Odeslat
-        </button>
-      </div>
-      {/* Tlačítko smazat chat */}
-      <button
-        className="mt-3 w-full text-sm py-2 rounded-xl bg-gray-100 text-gray-500 hover:bg-red-100 hover:text-red-700 transition"
-        onClick={handleClearChat}
-        disabled={loading}
-      >
-        Smazat chat
-      </button>
-    </div>
-  );
-}
