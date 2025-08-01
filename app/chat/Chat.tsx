@@ -51,6 +51,7 @@ export default function Chat() {
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-center bg-gradient-to-b from-gray-100 to-gray-300 py-4">
+      <div style={{ background: "yellow", color: "red", padding: 10 }}>TESTOVACÍ PRVEK - JSEM TADY?</div>
       {/* Chat box */}
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl flex flex-col h-[85vh] max-h-[700px] p-4">
         {/* Noahova fotka a jméno */}
