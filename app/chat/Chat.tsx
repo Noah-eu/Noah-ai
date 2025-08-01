@@ -15,16 +15,15 @@ export default function Chat() {
   const [loading, setLoading] = useState(false);
   const chatBottomRef = useRef<HTMLDivElement>(null);
 
-  // Načtení historie po načtení stránky
+  // Načti historii po načtení stránky
   useEffect(() => {
     const saved = localStorage.getItem("noah-history");
     if (saved) setMessages(JSON.parse(saved));
   }, []);
 
-  // Ukládání historie po každé změně
+  // Ukládej historii a scrolluj dolů
   useEffect(() => {
     localStorage.setItem("noah-history", JSON.stringify(messages));
-    // Scroll na konec při nové zprávě
     if (chatBottomRef.current) chatBottomRef.current.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
@@ -47,7 +46,6 @@ export default function Chat() {
     setLoading(false);
   }
 
-  // FUNKCE PRO SMAZÁNÍ CHATTU
   function handleClearChat() {
     setMessages([]);
     localStorage.removeItem("noah-history");
@@ -66,36 +64,4 @@ export default function Chat() {
           <MessageBubble key={i} sender={msg.sender} text={msg.text} />
         ))}
         {loading && (
-          <MessageBubble sender="noah" text="Noah přemýšlí..." />
-        )}
-        <div ref={chatBottomRef} />
-      </div>
-      {/* Input a tlačítko */}
-      <div className="flex gap-2">
-        <input
-          className="flex-1 border border-gray-300 rounded-xl p-2"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && handleSend()}
-          placeholder="Napiš zprávu Noahovi…"
-          disabled={loading}
-        />
-        <button
-          className="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold"
-          onClick={handleSend}
-          disabled={loading}
-        >
-          Odeslat
-        </button>
-      </div>
-      {/* Tlačítko na smazání chatu */}
-      <button
-        className="mt-3 w-full text-sm py-2 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-700 transition"
-        onClick={handleClearChat}
-        disabled={loading}
-      >
-        Vymazat chat
-      </button>
-    </div>
-  );
-}
+          <MessageBubble sender="noah" text="Noah přem
