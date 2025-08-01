@@ -64,4 +64,36 @@ export default function Chat() {
           <MessageBubble key={i} sender={msg.sender} text={msg.text} />
         ))}
         {loading && (
-          <MessageBubble sender="noah" text="Noah přem
+          <MessageBubble sender="noah" text="Noah přemýšlí..." />
+        )}
+        <div ref={chatBottomRef} />
+      </div>
+      {/* Input a Odeslat */}
+      <div className="flex gap-2">
+        <input
+          className="flex-1 border border-gray-300 rounded-xl p-2"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && handleSend()}
+          placeholder="Napiš zprávu Noahovi…"
+          disabled={loading}
+        />
+        <button
+          className="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold"
+          onClick={handleSend}
+          disabled={loading}
+        >
+          Odeslat
+        </button>
+      </div>
+      {/* Tlačítko na smazání chatu – musí být pod inputem */}
+      <button
+        className="mt-2 w-full py-2 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-700 transition"
+        onClick={handleClearChat}
+        disabled={loading}
+      >
+        Vymazat chat
+      </button>
+    </div>
+  );
+}
